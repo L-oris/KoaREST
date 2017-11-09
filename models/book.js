@@ -15,3 +15,12 @@ const BookModel = mongoose.model('Book',BookSchema)
 
 
 module.exports = BookModel
+
+
+//DUMB BOOK
+// {
+//   "title": "Harry Potter",
+//   "author": "J.K.Rowling",
+//   "year": 2011,
+//   "pages": 482
+// }
