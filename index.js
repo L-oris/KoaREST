@@ -1,6 +1,7 @@
 const Koa = require('koa'),
       bodyParser = require('koa-body'),
-      morgan = require('koa-morgan')
+      morgan = require('koa-morgan'),
+      mongoose = require('mongoose')
 
 const app = new Koa(),
       router = require('./router')
@@ -19,6 +20,12 @@ app.use(async (ctx,next)=>{
   }
 })
 
+//MONGO DB
+const {DBHost} = require(`./config/${process.env.NODE_ENV}.json`)
+mongoose.connect(DBHost, { useMongoClient: true })
+const db = mongoose.connection
+db.on('error', console.error.bind(console, 'connection error:'))
+
 //MIDDLEWARES
 app.use(morgan(':method :url :status'))
 app.use(bodyParser())
@@ -31,7 +38,6 @@ app.use(require('koa-static-server')({
 
 //ROUTER
 app.use(router.routes())
-   .use(router.allowedMethods())
 
 
 app.listen(3000)
