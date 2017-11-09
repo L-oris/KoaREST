@@ -5,6 +5,7 @@ const mongoose = require('mongoose'),
 //RETRIEVE ALL BOOKS
 module.exports.getBooks = async ctx => {
   const books = await Book.find()
+
   ctx.body = books
 }
 
@@ -18,4 +19,13 @@ module.exports.addBook = async ctx => {
     message: "Book successfully added!",
     book: savedBook
   }
+}
+
+
+//GET BOOK BY ID
+module.exports.getBookById = async ctx => {
+  const {id:bookId} = ctx.params
+  const searchedBook = await Book.findById(bookId)
+
+  ctx.body = searchedBook
 }

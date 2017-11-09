@@ -3,24 +3,16 @@ const Router = require('koa-router'),
 
 const bookMethods = require('./dbMethods/book')
 
-router.get('/test', async ctx=>{
-  ctx.body = {
-    message: 'Welcome to our Bookstore!'
-  }
+
+router.get('/', ctx=>{
+  ctx.body = {message: 'Welcome to our Bookstore!'}
 })
 
-router.post('/test', async ctx=>{
-  const httpBody = ctx.request.body
-  ctx.body = Object.assign({},httpBody,{
-    request: 'POST REQUEST'
-  })
-})
-
-
-router.get('/book', bookMethods.getBooks)
+router.get('/books', bookMethods.getBooks)
 
 router.post('/book', bookMethods.addBook)
 
+router.get('/book/:id', bookMethods.getBookById)
 
 
 
