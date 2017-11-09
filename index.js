@@ -27,8 +27,11 @@ const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
 
 //MIDDLEWARES
-app.use(morgan(':method :url :status'))
 app.use(bodyParser())
+//disable morgan when testing
+if(process.env.NODE_ENV !== 'test'){
+  app.use(morgan(':method :url :status'))
+}
 
 //SERVE STATIC FILES
 app.use(require('koa-static-server')({
