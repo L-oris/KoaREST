@@ -54,4 +54,8 @@ app.use(router.routes())
 
 const PORT = 3000
 app.listen(PORT)
-console.log(`Server listening on port ${PORT}`);
+console.log(`Server listening on port ${PORT}`)
+
+
+//for testing
+module.exports = app
