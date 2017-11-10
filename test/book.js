@@ -56,7 +56,7 @@ describe('Books', ()=>{
           })
     })
 
-  })
+  }) //end describe(`GET '/books'`)
 
 
   //POST '/book'
@@ -66,11 +66,12 @@ describe('Books', ()=>{
       chai.request(server)
           .post('/book')
           .send({
-            "title": "Harry Potter"
+            "title": "Twenty Thousand Leagues Under the Sea"
           })
           .end((err,res)=>{
             assert.equal(res.status, 500)
-            assert.property(res.body, 'errorMessage')
+            assert.hasAllKeys(res.body, ['status','errorMessage'])
+            assert.equal(res.body.errorMessage, 'Error adding new book to collection')
             done()
           })
     })
@@ -79,21 +80,68 @@ describe('Books', ()=>{
       chai.request(server)
           .post('/book')
           .send({
-            "title": "Harry Potter",
-            "author": "J.K.Rowling",
-            "year": 2011,
-            "pages": 482
+            title: 'Twenty Thousand Leagues Under the Sea',
+            author: 'Jules Verne',
+            year: 1870,
+            pages: 256
           })
           .end((err,res)=>{
             assert.equal(res.status, 200)
             assert.isObject(res.body)
             assert.hasAllKeys(res.body, ['message','book'])
             assert.hasAllKeys(res.body.book, ['__v','_id','title','author','year','pages','createdAt'])
+            assert.equal(res.body.book.title, 'Twenty Thousand Leagues Under the Sea')
+            assert.equal(res.body.book.author, 'Jules Verne')
+            assert.equal(res.body.book.year, 1870)
+            assert.equal(res.body.book.pages, 256)
             done()
           })
     })
 
-  })
+  }) //end describe(`POST '/book'`)
 
 
-})
+  //GET '/books'
+  describe(`GET '/book/:id'`, ()=>{
+
+    it(`should get 404 'Not Found' error if given id does not exist`, done =>{
+      chai.request(server)
+          .get('/book/12345')
+          .end((err,res)=>{
+            assert.equal(res.status,404)
+            assert.hasAllKeys(res.body, ['status','errorMessage'])
+            assert.equal(res.body.errorMessage, 'Book not found')
+            done()
+          })
+    })
+
+    it(`should get a book by the given id`, done =>{
+      //fill database with new book, then query for it and check response
+      (async ()=>{
+        const newBook = new Book({
+          "title": "Twenty Thousand Leagues Under the Sea",
+          "author": "Jules Verne",
+          "year": 1870,
+          "pages": 256
+        })
+        const {id:bookId} = await newBook.save()
+
+        chai.request(server)
+        .get(`/book/${bookId}`)
+        .end((err,res)=>{
+          assert.equal(res.status,200)
+          assert.isObject(res.body)
+          assert.hasAllKeys(res.body, ['__v','_id','title','author','year','pages','createdAt'])
+          assert.equal(res.body.title, 'Twenty Thousand Leagues Under the Sea')
+          assert.equal(res.body.author, 'Jules Verne')
+          assert.equal(res.body.year, 1870)
+          assert.equal(res.body.pages, 256)
+          done()
+        })
+      })()
+    })
+
+  }) //end describe(`GET '/book/:id'`)
+
+
+}) //end describe('Books'
