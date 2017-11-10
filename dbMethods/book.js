@@ -62,7 +62,7 @@ module.exports.deleteBookById = async ctx => {
     }
 
   } catch(err){
-    const error = new Error(`Error deleting book from collection`)
+    const error = new Error(`Error deleting: book does not exist`)
     error.status = 404
     throw error
   }
@@ -85,7 +85,7 @@ module.exports.updateBookById = async ctx => {
     }
 
   } catch(err){
-    const error = new Error(`Error updating book: does not exist`)
+    const error = new Error(`Error updating: book does not exist`)
     error.status = 404
     throw error
   }

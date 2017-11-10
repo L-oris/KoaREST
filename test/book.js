@@ -71,7 +71,6 @@ describe('Books', ()=>{
           .end((err,res)=>{
             assert.equal(res.status, 500)
             assert.hasAllKeys(res.body, ['status','errorMessage'])
-            assert.equal(res.body.errorMessage, 'Error adding new book to collection')
             done()
           })
     })
@@ -110,7 +109,6 @@ describe('Books', ()=>{
           .end((err,res)=>{
             assert.equal(res.status,404)
             assert.hasAllKeys(res.body, ['status','errorMessage'])
-            assert.equal(res.body.errorMessage, 'Book not found')
             done()
           })
     })
@@ -153,7 +151,6 @@ describe('Books', ()=>{
           .end((err,res)=>{
             assert.equal(res.status,404)
             assert.hasAllKeys(res.body, ['status','errorMessage'])
-            assert.equal(res.body.errorMessage, 'Error deleting book from collection')
             done()
           })
     })
@@ -176,7 +173,6 @@ describe('Books', ()=>{
               assert.equal(res.status,200)
               assert.isObject(res.body)
               assert.hasAllKeys(res.body, ['message'])
-              assert.equal(res.body.message, 'Book successfully removed')
               done()
             })
       })()
@@ -194,7 +190,6 @@ describe('Books', ()=>{
           .end((err,res)=>{
             assert.equal(res.status,404)
             assert.hasAllKeys(res.body, ['status','errorMessage'])
-            assert.equal(res.body.errorMessage, 'Error updating book: does not exist')
             done()
           })
     })
