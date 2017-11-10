@@ -42,7 +42,7 @@ describe('Books', ()=>{
   })
 
 
-  //GET '/books'
+
   describe(`GET '/books'`, ()=>{
 
     it('should get all the books', done =>{
@@ -59,14 +59,14 @@ describe('Books', ()=>{
   }) //end describe(`GET '/books'`)
 
 
-  //POST '/book'
+
   describe(`POST '/book'`, ()=>{
 
-    it('should NOT create a new book if http body is missing required book values', done =>{
+    it('should NOT create a new book when missing values in POST body', done =>{
       chai.request(server)
           .post('/book')
           .send({
-            "title": "Twenty Thousand Leagues Under the Sea"
+            "title": "Around the Moon"
           })
           .end((err,res)=>{
             assert.equal(res.status, 500)
@@ -76,11 +76,11 @@ describe('Books', ()=>{
           })
     })
 
-    it(`should create a new book when http body is passed 'title', 'author', 'year', 'pages'`, done =>{
+    it(`should create a new book when POST body is passed 'title', 'author', 'year', 'pages'`, done =>{
       chai.request(server)
           .post('/book')
           .send({
-            title: 'Twenty Thousand Leagues Under the Sea',
+            title: 'Around the Moon',
             author: 'Jules Verne',
             year: 1870,
             pages: 256
@@ -90,7 +90,7 @@ describe('Books', ()=>{
             assert.isObject(res.body)
             assert.hasAllKeys(res.body, ['message','book'])
             assert.hasAllKeys(res.body.book, ['__v','_id','title','author','year','pages','createdAt'])
-            assert.equal(res.body.book.title, 'Twenty Thousand Leagues Under the Sea')
+            assert.equal(res.body.book.title, 'Around the Moon')
             assert.equal(res.body.book.author, 'Jules Verne')
             assert.equal(res.body.book.year, 1870)
             assert.equal(res.body.book.pages, 256)
@@ -101,10 +101,10 @@ describe('Books', ()=>{
   }) //end describe(`POST '/book'`)
 
 
-  //GET '/books'
+
   describe(`GET '/book/:id'`, ()=>{
 
-    it(`should get 404 'Not Found' error if given id does not exist`, done =>{
+    it(`should send 404 'Not Found' error when trying to get unexisting book`, done =>{
       chai.request(server)
           .get('/book/12345')
           .end((err,res)=>{
@@ -119,7 +119,7 @@ describe('Books', ()=>{
       //fill database with new book, then query for it and check response
       (async ()=>{
         const newBook = new Book({
-          "title": "Twenty Thousand Leagues Under the Sea",
+          "title": "Around the Moon",
           "author": "Jules Verne",
           "year": 1870,
           "pages": 256
@@ -127,17 +127,57 @@ describe('Books', ()=>{
         const {id:bookId} = await newBook.save()
 
         chai.request(server)
-        .get(`/book/${bookId}`)
-        .end((err,res)=>{
-          assert.equal(res.status,200)
-          assert.isObject(res.body)
-          assert.hasAllKeys(res.body, ['__v','_id','title','author','year','pages','createdAt'])
-          assert.equal(res.body.title, 'Twenty Thousand Leagues Under the Sea')
-          assert.equal(res.body.author, 'Jules Verne')
-          assert.equal(res.body.year, 1870)
-          assert.equal(res.body.pages, 256)
-          done()
+            .get(`/book/${bookId}`)
+            .end((err,res)=>{
+              assert.equal(res.status,200)
+              assert.isObject(res.body)
+              assert.hasAllKeys(res.body, ['__v','_id','title','author','year','pages','createdAt'])
+              assert.equal(res.body.title, 'Around the Moon')
+              assert.equal(res.body.author, 'Jules Verne')
+              assert.equal(res.body.year, 1870)
+              assert.equal(res.body.pages, 256)
+              done()
+            })
+      })()
+    })
+
+  }) //end describe(`GET '/book/:id'`)
+
+
+
+  describe(`DELETE '/book/:id'`, ()=>{
+
+    it(`should send 404 'Not Found' error when trying to delete unexisting book`, done =>{
+      chai.request(server)
+          .delete('/book/12345')
+          .end((err,res)=>{
+            assert.equal(res.status,404)
+            assert.hasAllKeys(res.body, ['status','errorMessage'])
+            assert.equal(res.body.errorMessage, 'Error deleting book from collection')
+            done()
+          })
+    })
+
+    it(`should delete a book by given id`, done =>{
+      //fill database with new book, then try removing it
+      (async ()=>{
+        const newBook = new Book({
+          "title": "Around the Moon",
+          "author": "Jules Verne",
+          "year": 1870,
+          "pages": 256
         })
+        const {id:bookId} = await newBook.save()
+
+        chai.request(server)
+            .delete(`/book/${bookId}`)
+            .end((err,res)=>{
+              assert.equal(res.status,200)
+              assert.isObject(res.body)
+              assert.hasAllKeys(res.body, ['message'])
+              assert.equal(res.body.message, 'Book successfully removed')
+              done()
+            })
       })()
     })
 

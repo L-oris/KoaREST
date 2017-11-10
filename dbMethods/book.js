@@ -62,7 +62,9 @@ module.exports.deleteBookById = async ctx => {
     }
 
   } catch(err){
-    throw new Error(`Error deleting book from collection`)
+    const error = new Error(`Error deleting book from collection`)
+    error.status = 404
+    throw error
   }
 }
 
