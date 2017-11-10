@@ -20,7 +20,9 @@ router.put('/book/:id', bookMethods.updateBookById)
 
 //catch all falling requests
 router.all('*', ctx => {
-  throw `Route ${ctx.request.method}'${ctx.request.url}' does not exist`
+  const error = new Error(`Route ${ctx.request.method}'${ctx.request.url}' does not exist`)
+  error.status = 404
+  throw error
 })
 
 

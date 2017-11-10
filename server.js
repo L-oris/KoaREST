@@ -15,10 +15,10 @@ app.use(async (ctx,next)=>{
   } catch(err){
     ctx.status = err.status || 500
     ctx.body = {
-      errorMessage: err,
-      status: err.status || 500
+      status: err.status || 500,
+      errorMessage: err.message || `Internal Server Error`
     }
-    //disable logs when testing
+    //disable error logs when testing
     if(process.env.NODE_ENV !== 'test'){
       console.log(`Server Error --> ${err}`);
     }

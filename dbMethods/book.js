@@ -9,7 +9,9 @@ module.exports.getBooks = async ctx => {
     const books = await Book.find()
     ctx.body = books
 
-  } catch(err){throw `Error getting books from collection`}
+  } catch(err){
+    throw new Error(`Error getting books list from collection`)
+  }
 }
 
 
@@ -25,7 +27,9 @@ module.exports.addBook = async ctx => {
       book: savedBook
     }
 
-  } catch(err){throw `Error adding new book to collection`}
+  } catch(err){
+    throw new Error(`Error adding new book to collection`)
+  }
 }
 
 
@@ -38,7 +42,11 @@ module.exports.getBookById = async ctx => {
 
     ctx.body = searchedBook
 
-  } catch(err){throw `Error getting book ${bookId} from collection`}
+  } catch(err){
+    const error = new Error(`Book not found`)
+    error.status = 404
+    throw error
+  }
 }
 
 
@@ -53,7 +61,9 @@ module.exports.deleteBookById = async ctx => {
       message: "Book successfully removed",
     }
 
-  } catch(err){throw `Error deleting book ${bookId} from collection`}
+  } catch(err){
+    throw new Error(`Error deleting book from collection`)
+  }
 }
 
 
@@ -72,5 +82,7 @@ module.exports.updateBookById = async ctx => {
       book: updatedBook
     }
 
-  } catch(err){throw `Error updating book ${bookId}`}
+  } catch(err){
+    throw new Error(`Error updating book`)
+  }
 }
