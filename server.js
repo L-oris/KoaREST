@@ -13,11 +13,14 @@ app.use(async (ctx,next)=>{
   try {
     await next()
   } catch(err){
-    console.log(`Server Error --> ${err}`);
     ctx.status = err.status || 500
     ctx.body = {
       errorMessage: err,
       status: err.status || 500
+    }
+    //disable logs when testing
+    if(process.env.NODE_ENV !== 'test'){
+      console.log(`Server Error --> ${err}`);
     }
   }
 })

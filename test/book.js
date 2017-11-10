@@ -59,4 +59,41 @@ describe('Books', ()=>{
   })
 
 
+  //POST '/book'
+  describe(`POST '/book'`, ()=>{
+
+    it('should NOT create a new book if http body is missing required book values', done =>{
+      chai.request(server)
+          .post('/book')
+          .send({
+            "title": "Harry Potter"
+          })
+          .end((err,res)=>{
+            assert.equal(res.status, 500)
+            assert.property(res.body, 'errorMessage')
+            done()
+          })
+    })
+
+    it(`should create a new book when http body is passed 'title', 'author', 'year', 'pages'`, done =>{
+      chai.request(server)
+          .post('/book')
+          .send({
+            "title": "Harry Potter",
+            "author": "J.K.Rowling",
+            "year": 2011,
+            "pages": 482
+          })
+          .end((err,res)=>{
+            assert.equal(res.status, 200)
+            assert.isObject(res.body)
+            assert.hasAllKeys(res.body, ['message','book'])
+            assert.hasAllKeys(res.body.book, ['__v','_id','title','author','year','pages','createdAt'])
+            done()
+          })
+    })
+
+  })
+
+
 })
