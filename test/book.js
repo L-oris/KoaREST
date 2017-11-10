@@ -171,6 +171,7 @@ describe('Books', ()=>{
 
         chai.request(server)
             .delete(`/book/${bookId}`)
+            .send()
             .end((err,res)=>{
               assert.equal(res.status,200)
               assert.isObject(res.body)
@@ -181,7 +182,54 @@ describe('Books', ()=>{
       })()
     })
 
-  }) //end describe(`GET '/book/:id'`)
+  }) //end describe(`DELETE '/book/:id'`)
+
+
+
+  describe(`PUT '/book/:id'`, ()=>{
+
+    it(`should send 404 'Not Found' error when trying to update unexisting book`, done =>{
+      chai.request(server)
+          .put('/book/12345')
+          .end((err,res)=>{
+            assert.equal(res.status,404)
+            assert.hasAllKeys(res.body, ['status','errorMessage'])
+            assert.equal(res.body.errorMessage, 'Error updating book: does not exist')
+            done()
+          })
+    })
+
+    it(`should update a book by given id`, done =>{
+      //fill database with new book, then try removing it
+      (async ()=>{
+        const newBook = new Book({
+          "title": "Around the Moon",
+          "author": "Jules Verne",
+          "year": 1870,
+          "pages": 256
+        })
+        const {id:bookId} = await newBook.save()
+
+        chai.request(server)
+            .put(`/book/${bookId}`)
+            .send({
+              author: 'Ernest Hemingway'
+            })
+            .end((err,res)=>{
+              assert.equal(res.status,200)
+              assert.isObject(res.body)
+              assert.hasAllKeys(res.body, ['message', 'book'])
+              assert.hasAllKeys(res.body.book, ['__v','_id','title','author','year','pages','createdAt'])
+              assert.equal(res.body.book.title, 'Around the Moon')
+              assert.equal(res.body.book.author, 'Ernest Hemingway')
+              assert.equal(res.body.book.year, 1870)
+              assert.equal(res.body.book.pages, 256)
+              done()
+            })
+      })()
+    })
+
+  }) //end describe(`PUT '/book/:id'`)
 
 
 }) //end describe('Books'
