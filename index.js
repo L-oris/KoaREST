@@ -13,10 +13,10 @@ app.use(async (ctx,next)=>{
   try {
     await next()
   } catch(err){
-    console.log(`Koa Error --> ${err}`);
+    console.log(`Server Error --> ${err}`);
     ctx.status = err.status || 500
     ctx.body = {
-      error: 'Error happened'
+      error: err
     }
   }
 })
@@ -28,7 +28,7 @@ mongoose.Promise = global.Promise
 const {DBHost} = require(`./config/${process.env.NODE_ENV}.json`)
 mongoose.connect(DBHost, { useMongoClient: true })
 const db = mongoose.connection
-db.on('error', console.error.bind(console, 'connection error:'))
+db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
 
 //MIDDLEWARES
@@ -50,4 +50,6 @@ app.use(require('koa-static-server')({
 app.use(router.routes())
 
 
-app.listen(3000)
+const PORT = 3000
+app.listen(PORT)
+console.log(`Server listening on port ${PORT}`);

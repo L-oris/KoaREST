@@ -4,28 +4,39 @@ const mongoose = require('mongoose'),
 
 //RETRIEVE ALL BOOKS
 module.exports.getBooks = async ctx => {
-  const books = await Book.find()
+  try {
 
-  ctx.body = books
+    const books = await Book.find()
+    ctx.body = books
+
+  } catch(err){throw `Error getting books from collection`}
 }
 
 
 //ADD A BOOK TO THE STORE
 module.exports.addBook = async ctx => {
-  const newBook = new Book(ctx.request.body)
-  const savedBook = await newBook.save()
+  try {
 
-  ctx.body = {
-    message: "Book successfully added!",
-    book: savedBook
-  }
+    const newBook = new Book(ctx.request.body)
+    const savedBook = await newBook.save()
+
+    ctx.body = {
+      message: "Book successfully added!",
+      book: savedBook
+    }
+
+  } catch(err){throw `Error adding new book to collection`}
 }
 
 
 //GET BOOK BY ID
 module.exports.getBookById = async ctx => {
-  const {id:bookId} = ctx.params
-  const searchedBook = await Book.findById(bookId)
+  try {
 
-  ctx.body = searchedBook
+    const {id:bookId} = ctx.params
+    const searchedBook = await Book.findById(bookId)
+
+    ctx.body = searchedBook
+
+  } catch(err){throw `Error getting book ${bookId} from collection`}
 }
