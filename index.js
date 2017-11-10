@@ -8,7 +8,7 @@ const app = new Koa(),
       router = require('./router')
 
 
-//error handling
+//ERROR HANDLING
 app.use(async (ctx,next)=>{
   try {
     await next()
@@ -16,7 +16,8 @@ app.use(async (ctx,next)=>{
     console.log(`Server Error --> ${err}`);
     ctx.status = err.status || 500
     ctx.body = {
-      error: err
+      errorMessage: err,
+      status: err.status || 500
     }
   }
 })
@@ -25,6 +26,7 @@ app.use(async (ctx,next)=>{
 //MONGO DB
 //allow using mongoose with async-await
 mongoose.Promise = global.Promise
+
 const {DBHost} = require(`./config/${process.env.NODE_ENV}.json`)
 mongoose.connect(DBHost, { useMongoClient: true })
 const db = mongoose.connection

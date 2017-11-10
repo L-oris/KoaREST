@@ -18,5 +18,10 @@ router.delete('/book/:id', bookMethods.deleteBookById)
 
 router.put('/book/:id', bookMethods.updateBookById)
 
+//catch all falling requests
+router.all('*', ctx => {
+  throw `Route ${ctx.request.method}'${ctx.request.url}' does not exist`
+})
+
 
 module.exports = router
